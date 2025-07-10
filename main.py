@@ -5,9 +5,10 @@ from matplotlib import pyplot as plt # for visualising images
 import time # used to take time for each frame
 import mediapipe as mp # detecting motion using points
 
+print('file is running')
+
 # using openCV to access the webcam
 # setup a video capture then looping through the frame -> video
-
 # accessing the webcam and = cap
 cap = cv2.VideoCapture(0)
 
@@ -25,10 +26,11 @@ while cap.isOpened(): # while the video source is opened
     cv2.imshow('OpenCV Feed', frame)
     
     # if a key is pressed and its q then exit 
-    if cv2.waitKey(10) & 0xFF == ord('q'):
+    if cv2.waitKey(30) & 0xFF == ord('q'):
         break
 
 cap.release() # releasing the webcam 
 cv2.destroyAllWindows() # close down the frame
 
 # using mediapipe for detection
+

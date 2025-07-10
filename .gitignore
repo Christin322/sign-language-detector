@@ -1,0 +1,6 @@
+# Ignore virtual environment folder
+venv-sign-language-detector/
+
+# Python cache files
+__pycache__/
+*.pyc

@@ -3,3 +3,7 @@
 Just following a youtube tutorial to learn tracking.
 
 https://www.youtube.com/watch?v=doDUihpj6ro
+
+
+Activating the env
+`.\venv\Scripts\activate`

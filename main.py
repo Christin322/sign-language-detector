@@ -1,8 +1,8 @@
 import cv2
 
 # import cv2
-# import numpy as np # used for working with arrays and structuring datasets
-# import os
+import numpy as np # used for working with arrays and structuring datasets
+import os
 # from matplotlib import pyplot as plt # for visualising images
 # import time # used to take time for each frame
 import mediapipe as mp # detecting motion using points
@@ -45,6 +45,19 @@ def draw_styled_landmarks(image, results):
     mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
     mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
     
+    
+# extracts all the keypoints in the landmarks into an array
+def extract_keypoints(results):
+    # list comphrension ver + flatten to 1d array cause thats the format for the lstm model
+    pose = np.array([[res.x, res.y, res.z, res.visibility] for res in results.pose.landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33*4) # 33 landmarks, 4 values each (x,y,x and visibility
+    face = np.array([[res.x, res.y, res.z] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(468*3) 
+    # if array is 0 cause left hand wasnt in cam -> zero array
+    lh = np.array([[res.x, res.y, res.z] for res in results.left_hand_landmarks.landmark]).flatten() if results.left_hand_landmarks else np.zeros(21*3)
+    rh = np.array([[res.x, res.y, res.z] for res in results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(21*3)
+
+    # concatenating them together
+    return np.concatenate([pose, face, lh, rh])
+
 # using openCV to access the webcam _______________________ 
 # setup a video capture then looping through the frame -> video
 # accessing the webcam and = cap
@@ -71,6 +84,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
         image, results = mediapipe_detection(frame, holistic)
         # print(results)
         
+        
         # draw landmarks
         draw_styled_landmarks(image, results)
         
@@ -88,3 +102,33 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
 
 
     # using mediapipe for detection __________________
+
+
+pose = []
+# flatten landmarks (was an array of objects) into a 2d array
+for res in results.pose.landmarks.landmark:
+    test = np.array([res.x, res.y, res.z, res.visibility])
+    pose.append(test)
+
+
+# # path for exported data, numpy arrays
+# DATA_PATH = os.path.join('MP_DATA')
+
+# # actions that we try to detect
+# # sequence of data is used for detection, not single frame
+# actions = np.array(['hello', 'thanks', 'iloveyou'])
+
+# # 30 videos worth of data
+# no_sequences = 30
+
+# # each video is 30 frames in length
+# sequence_length = 30
+
+
+# # for each action make a folder, and a folder for each sequence of action
+# for action in actions:
+#         for sequence in range(no_sequences):
+#             try:
+#                 os.makedirs(os.path.join(DATA_PATH, action, str(sequence)))
+#             except:
+#                 pass
